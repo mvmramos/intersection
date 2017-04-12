@@ -1,11 +1,13 @@
 These files contain definitions and proof scripts related to the correctness of:
 
 - languages square, prime and anbncn are not context-free;
+- context-free languages are closed under alphabet substitution;
 - context-free languages are not closed under intersection.
 
 File list:
 
 - allrules.v: generates all rules over a given alphabet;
+- bijection.v: context-free languages are closed under alphabet substitution;
 - cfg.v: definitions and basic lemmas regarding context-free grammars and derivations;
 - cfl.v: definitions and basic lemmas regarding context-free languages;
 - chomsky.v: Chomsky grammar normalization;
