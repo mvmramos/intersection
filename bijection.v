@@ -1,3 +1,26 @@
+(* ---------------------------------------------------------------------
+
+   This file is part of a repository containing the definitions and 
+   proof scripts related to the formalization of context-free language
+   theory in Coq. Specifically, the following results were obtained:
+   
+   (i) languages square, prime and anbncn are not context-free; 
+   (ii) context-free languages are not closed under intersection.
+   
+   More information can be found in the article "Applications of the 
+   Formalization of the Pumping Lemma for Context-Free Languages, 
+   submitted to ITP 2017". Also, in the thesis "Formalization of 
+   Context-Free Language Theory", submitted to the Informatics
+   Center of the Pernambuco Federal University (CIn/UFPE) in
+   Brazil.
+   
+   The file README.md describes the contents of each file and 
+   provides instructions on how to compile them.
+   
+   Marcus Vinícius Midena Ramos
+   mvmramos@gmail.com
+   --------------------------------------------------------------------- *)
+   
 Require Import List.
 Require Import Ring.
 Require Import Omega.
