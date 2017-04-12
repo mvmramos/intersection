@@ -33,6 +33,7 @@ Require Import cfg.
 Require Import cfl.
 Require Import pumping.
 Require Import pumping_anbncn.
+Require Import bijection.
 
 Set Implicit Arguments.
 Unset Strict Implicit.
@@ -411,198 +412,6 @@ nt_eqdec:= nt_ed;
 rules_finite:= rs_cn_finite
 |}.
 
-Inductive rs_an: non_terminal -> sf -> Prop:=
-  r31: rs_an S [inr a; inl S]
-| r32: rs_an S [].
-
-Lemma rs_an_finite:
-exists n: nat,
-exists ntl: nlist,
-exists tl: tlist,
-In S ntl /\
-forall left: non_terminal,
-forall right: sf,
-rs_an left right ->
-(length right <= n) /\
-(In left ntl) /\
-(forall s: non_terminal, In (inl s) right -> In s ntl) /\
-(forall s: terminal, In (inr s) right -> In s tl).
-Proof.
-exists 2.
-exists [S; A; X; Y].
-exists [a; b; c].
-split.
-- simpl.
-  left.
-  reflexivity.
-- intros left right H1.
-  split.
-  + inversion H1.
-    * simpl.
-      omega.
-    * simpl.
-      omega.
-  + inversion H1.
-    * {
-      split.
-      - simpl.
-        left.
-        reflexivity.
-      - split.
-        + intros s H2.
-          destruct s.
-          * simpl. 
-            left.
-            reflexivity.
-          * simpl. 
-            right.
-            left.
-            reflexivity.
-          * simpl. 
-            right.
-            right.
-            left.
-            reflexivity.
-          * simpl. 
-            right.
-            right.
-            right.
-            left.
-            reflexivity.
-        + intros s H2.
-          destruct s.
-          * simpl. 
-            left.
-            reflexivity.
-          * simpl.
-            right.
-            left.
-            reflexivity.
-          * simpl.
-            right.
-            right.
-            left.
-            reflexivity.
-      }
-    * {
-      split.
-      - simpl.
-        left.
-        reflexivity.
-      - split.
-        + intros s H2.
-          simpl in H2.
-          contradiction. 
-        + intros s H2.
-          simpl in H2.
-          contradiction. 
-      }
-Qed.
-
-Definition g_an: cfg _ _:= {|
-start_symbol:= S; 
-rules:= rs_an;
-t_eqdec:= t_ed;
-nt_eqdec:= nt_ed;
-rules_finite:= rs_an_finite
-|}.
-
-Inductive rs_bmcm: non_terminal -> sf -> Prop:=
-  r41: rs_bmcm S [inr b; inl S; inr c]
-| r42: rs_bmcm S [].
-
-Lemma rs_bmcm_finite:
-exists n: nat,
-exists ntl: nlist,
-exists tl: tlist,
-In S ntl /\
-forall left: non_terminal,
-forall right: sf,
-rs_bmcm left right ->
-(length right <= n) /\
-(In left ntl) /\
-(forall s: non_terminal, In (inl s) right -> In s ntl) /\
-(forall s: terminal, In (inr s) right -> In s tl).
-Proof.
-exists 3.
-exists [S; A; X; Y].
-exists [a; b; c].
-split.
-- simpl.
-  left.
-  reflexivity.
-- intros left right H1.
-  split.
-  + inversion H1.
-    * simpl.
-      omega.
-    * simpl.
-      omega.
-  + inversion H1.
-    * {
-      split.
-      - simpl.
-        left.
-        reflexivity.
-      - split.
-        + intros s H2.
-          destruct s.
-          * simpl. 
-            left.
-            reflexivity.
-          * simpl. 
-            right.
-            left.
-            reflexivity.
-          * simpl. 
-            right.
-            right.
-            left.
-            reflexivity.
-          * simpl. 
-            right.
-            right.
-            right.
-            left.
-            reflexivity.
-        + intros s H2.
-          destruct s.
-          * simpl. 
-            left.
-            reflexivity.
-          * simpl.
-            right.
-            left.
-            reflexivity.
-          * simpl.
-            right.
-            right.
-            left.
-            reflexivity.
-      }
-    * {
-      split.
-      - simpl.
-        left.
-        reflexivity.
-      - split.
-        + intros s H2.
-          simpl in H2.
-          contradiction. 
-        + intros s H2.
-          simpl in H2.
-          contradiction. 
-      }
-Qed.
-
-Definition g_bmcm: cfg _ _:= {|
-start_symbol:= S; 
-rules:= rs_bmcm;
-t_eqdec:= t_ed;
-nt_eqdec:= nt_ed;
-rules_finite:= rs_bmcm_finite
-|}.
-
 Inductive ambm: list terminal -> Prop:=
 | ambm_1: ambm []
 | ambm_2: forall w: list terminal, ambm w -> ambm ([a]++w++[b]).
@@ -611,13 +420,177 @@ Inductive cn: list terminal -> Prop:=
 | cn_1: cn []
 | cn_2: forall w: list terminal, cn w -> cn ([c]++w).
 
+Lemma app_cn:
+forall s1 s2: list terminal,
+cn (s1 ++ s2) ->
+cn s1 /\ cn s2.
+Proof.
+intros s1 s2 H1.
+remember (s1 ++ s2) as s.
+revert s1 s2 Heqs.
+induction H1.
+- intros s1 s2 H1. 
+  symmetry in H1. 
+  apply app_eq_nil in H1.
+  destruct H1 as [H1 H2].  
+  rewrite H1, H2. 
+  split.
+  + apply cn_1.
+  + apply cn_1.
+- intros s1 s2 H2.
+  destruct s1, s2.
+  + inversion H2.
+  + inversion H2.
+    specialize (IHcn [] s2 H3).
+    split.
+    * apply IHcn.
+    * apply cn_2.
+      apply IHcn.
+  + inversion H2.
+    specialize (IHcn s1 [] H3).
+    split.
+    * apply cn_2.
+      apply IHcn.
+    * apply cn_1.
+  + inversion H2.
+    specialize (IHcn s1 (t0::s2) H3).
+    split.
+    * apply cn_2.
+      apply IHcn.
+    * apply IHcn.
+Qed.
+
+Definition f (t1: terminal): terminal:=
+match t1 with
+| a => b
+| b => c
+| c => a
+end.
+
+Lemma injective_f:
+injective f.
+Proof.
+unfold injective.
+intros x y H1.
+destruct x, y.
+- reflexivity.
+- simpl in H1; inversion H1.
+- simpl in H1; inversion H1.
+- simpl in H1; inversion H1.
+- reflexivity.
+- simpl in H1; inversion H1.
+- simpl in H1; inversion H1.
+- simpl in H1; inversion H1.
+- reflexivity.
+Qed.
+
+Definition g (t1: terminal): terminal:=
+match t1 with
+| b => a
+| c => b
+| a => c
+end.
+
+Lemma bijective_f:
+bijective f.
+Proof.
+unfold bijective.
+exists g.
+split.
+- destruct x.
+  + simpl; reflexivity.
+  + simpl; reflexivity.
+  + simpl; reflexivity.
+- destruct y.
+  + simpl; reflexivity.
+  + simpl; reflexivity.
+  + simpl; reflexivity.
+Qed.
+
 Inductive an: list terminal -> Prop:=
 | an_1: an []
 | an_2: forall w: list terminal, an w -> an ([a]++w).
 
+Definition an':= change_alphabet_in_language cn f.
+
+Lemma an_equiv_an':
+an == an'.
+Proof.
+unfold lang_eq.
+intros w.
+split.
+- intros H1.
+  induction H1.
+  + unfold an'.
+    exists [].
+    split.
+    * apply cn_1.
+    * simpl.
+      reflexivity.
+  + unfold an'.
+    unfold an' in IHan.
+    destruct IHan as [w1 [H2 H3]].
+    exists ([c]++w1).
+    split.
+    * apply cn_2.
+      exact H2.
+    * rewrite H3.
+      simpl.
+      reflexivity.
+- intros H1.
+  destruct H1 as [w1 [H2 H3]].
+  rewrite H3.
+  clear w H3.
+  induction H2.
+  + simpl.
+    apply an_1.
+  + rewrite map_app.
+    simpl.
+    apply an_2.
+    exact IHcn.
+Qed.
+
 Inductive bmcm: list terminal -> Prop:=
 | bmcm_1: bmcm []
 | bmcm_2: forall w: list terminal, bmcm w -> bmcm ([b]++w++[c]).
+
+Definition bmcm':= change_alphabet_in_language ambm f.
+
+Lemma bmcm_equiv_bmcm':
+bmcm == bmcm'.
+Proof.
+intros w.
+split.
+- intros H1.
+  induction H1.
+  + exists [].
+    split.
+    * apply ambm_1.
+    * simpl.
+      reflexivity.
+  + destruct IHbmcm as [w1 [H2 H3]].
+    exists ([a]++w1++[b]).
+    split.
+    * apply ambm_2.
+      exact H2.
+    * rewrite H3. 
+      repeat rewrite map_app.
+      simpl.
+      reflexivity.
+- intros H1.
+  destruct H1 as [w1 [H2 H3]].
+  rewrite H3.
+  clear w H3.
+  induction H2.
+  + simpl.
+    apply bmcm_1.
+  + repeat rewrite map_app.
+    simpl.
+    change (b :: map f w ++ [c]) with ([b] ++ map f w ++ [c]).
+    apply bmcm_2.
+    repeat rewrite map_app in H3.
+    apply IHambm.
+Qed.
 
 Definition ambmcn: lang terminal:=
 fun (s: list terminal) =>
@@ -924,187 +897,23 @@ Qed.
 Lemma cfl_an:
 cfl an.
 Proof.
-unfold cfl.
-exists non_terminal, g_an.
-unfold lang_eq.
-intros w.
-split.
-- intros H1.
-  unfold lang_of_g.
-  unfold produces.
-  unfold generates.
-  induction H1.
-  + simpl.
-    apply derives_rule with (s1:=[]) (s2:=[]) (left:=S) (right:=[]).
-    apply r32.
-  + apply derives_trans with (s2:=[inr a; inl S]).
-    * apply derives_rule with (s1:=[]) (s2:=[]) (left:=S) (right:=[inr a; inl S]).
-      apply r31.
-    * change [inr a; inl S] with ([inr a]++[inl S]).
-      repeat rewrite map_app.
-      change (map (terminal_lift non_terminal (terminal:=terminal)) [a]) with [@inr non_terminal terminal a].
-      apply derives_context_free_add_left.
-      exact IHan.
-- intros H1. 
-  unfold lang_of_g, produces, generates in H1.
-  simpl in H1.
-  apply derives_equiv_derives6 in H1.
-  destruct H1 as [n H1].
-  revert n w H1.
-  destruct n.
-  + intros w H1. 
-    inversion H1.
-    destruct w.
-    * inversion H.
-    * inversion H.
-  + induction n.
-    * intros w H1.
-      inversion H1.
-      {
-      inversion H2.
-      - inversion H3.
-        apply map_expand in H7.
-        destruct H7 as [_ [s2' [_ [_ H7]]]].
-        symmetry in H7.
-        apply map_expand in H7.
-        destruct H7 as [s1' [_ [_ [H7 _]]]].
-        rewrite <- H6 in H7.
-        symmetry in H7.
-        change ([inr a; inl S]) with ([inr a]++[inl S]) in H7.
-        apply map_expand in H7.
-        destruct H7 as [_ [s2'0 [_ [_ H7]]]].
-        destruct s2'0.
-        + inversion H7.
-        + inversion H7.
-      - change (inl left :: s2) with ([inl left]++s2) in H0.
-        apply app_single_v2 in H0.
-        destruct H0 as [H7 [H8 H9]].
-        rewrite <- H6, H7, H8 in H3.
-        inversion H3.
-        symmetry in H0.
-        apply map_eq_nil in H0.
-        rewrite H0.
-        apply an_1.
-      }
-    * intros w H1.
-      inversion H1.
-        change (s1 ++ inl left :: s2) with (s1 ++ [inl left] ++ s2) in H0.
-        apply app_single_v2 in H0.
-        destruct H0 as [H5 [H6 H7]].
-        rewrite H5, H6 in H3.
-        simpl in H3.
-        rewrite app_nil_r in H3.
-        {
-        inversion H2.
-        - rewrite <- H8 in H3.
-          change ([inr a; inl S]) with ([inr a] ++ [inl S]) in H3.
-          apply derives6_terminal_left in H3.
-          destruct H3 as [w' [H9 H10]].
-          specialize (IHn w' H10).
-          rewrite H9.
-          apply an_2.
-          exact IHn.
-        - rewrite <- H8 in H3.
-          inversion H3.
-          apply app_eq_nil in H10.
-          destruct H10 as [_ H10].
-          inversion H10.
-        }
+apply cfl_lang_eq with (l1:=an').
+- apply change_alphabet_in_language_is_cfl.
+  + apply cfl_cn.
+  + apply bijective_f. 
+- apply lang_eq_sym. 
+  apply an_equiv_an'.
 Qed.
 
 Lemma cfl_bmcm:
 cfl bmcm.
 Proof.
-unfold cfl.
-exists non_terminal, g_bmcm.
-unfold lang_eq.
-intros w.
-split.
-- intros H1.
-  unfold lang_of_g.
-  unfold produces.
-  unfold generates.
-  induction H1.
-  + simpl.
-    apply derives_rule with (s1:=[]) (s2:=[]) (left:=S) (right:=[]).
-    apply r42.
-  + apply derives_trans with (s2:=[inr b; inl S; inr c]).
-    * apply derives_rule with (s1:=[]) (s2:=[]) (left:=S) (right:=[inr b; inl S; inr c]).
-      apply r41.
-    * change [inr b; inl S; inr c] with ([inr b]++[inl S]++[inr c]).
-      repeat rewrite map_app.
-      change (map (terminal_lift non_terminal (terminal:=terminal)) [b]) with [@inr non_terminal terminal b].
-      change (map (terminal_lift non_terminal (terminal:=terminal)) [c]) with [@inr non_terminal terminal c].
-      apply derives_context_free_add_left.
-      apply derives_context_free_add_right.
-      exact IHbmcm.
-- intros H1.
-  unfold lang_of_g, produces, generates in H1.
-  apply derives_equiv_derives6 in H1.
-  destruct H1 as [n H1].
-  destruct n.
-  + inversion H1.
-    destruct w.
-    * inversion H.
-    * simpl in H.
-      inversion H.
-  + revert w H1.
-    induction n.
-    * intros w H1.
-      simpl.
-      inversion H1.
-      inversion H3.
-      {
-      inversion H2.
-      - rewrite <- H8 in H5. 
-        apply map_expand in H5. 
-        destruct H5 as [_ [s2' [_ [_ H5]]]].
-        symmetry in H5.
-        apply map_expand in H5.
-        destruct H5 as [s1' [_ [_ [H5 _]]]].
-        symmetry in H5.
-        change [inr b; inl S; inr c] with ([inr b] ++ [inl S; inr c]) in H5.
-        apply map_expand in H5. 
-        destruct H5 as [_ [s2'0 [_ [_ H5]]]].
-        destruct s2'0.
-        + simpl in H5.
-          inversion H5.
-        + simpl in H5.
-          inversion H5.
-      - change (s1 ++ inl left :: s2) with (s1 ++ [inl left] ++ s2) in H0.
-        apply app_single_v2 in H0.
-        destruct H0 as [H9 [H10 _]].
-        rewrite <- H8, H9, H10 in H5.
-        simpl in H5.
-        symmetry in H5.
-        apply map_eq_nil in H5.
-        rewrite H5.
-        apply bmcm_1.
-      }
-    * intros w H1.
-      inversion H1.
-      change (s1 ++ inl left :: s2) with (s1 ++ [inl left] ++ s2) in H0.
-      apply app_single_v2 in H0.
-      destruct H0 as [H5 [H6 H7]].
-      rewrite H5, H6 in H3.
-      simpl in H3.
-      rewrite app_nil_r in H3.
-      {
-      inversion H2.
-      - rewrite <- H8 in H3.
-         change ([inr b; inl S; inr c]) with ([inr b] ++ [inl S]++[inr c]) in H3.
-         apply derives6_terminal_left_right in H3.
-         destruct H3 as [w' [H9 H10]].
-         specialize (IHn w' H10).
-         rewrite H9.
-         apply bmcm_2.
-         exact IHn.
-      - rewrite <- H8 in H3.
-        inversion H3.
-        apply app_eq_nil in H10.
-        destruct H10 as [_ H10].
-        inversion H10. 
-      }
+apply cfl_lang_eq with (l1:=bmcm').
+- apply change_alphabet_in_language_is_cfl.
+  + apply cfl_ambm.
+  + apply bijective_f.
+- apply lang_eq_sym. 
+  apply bmcm_equiv_bmcm'.
 Qed.
 
 Lemma cat_ambm_cn_eq_ambmcn:
