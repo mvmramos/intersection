@@ -1,26 +1,3 @@
-(* ---------------------------------------------------------------------
-
-   This file is part of a repository containing the definitions and 
-   proof scripts related to the formalization of context-free language
-   theory in Coq. Specifically, the following results were obtained:
-   
-   (i) languages square, prime and anbncn are not context-free; 
-   (ii) context-free languages are not closed under intersection.
-   
-   More information can be found in the article "Applications of the 
-   Formalization of the Pumping Lemma for Context-Free Languages, 
-   submitted to ITP 2017". Also, in the thesis "Formalization of 
-   Context-Free Language Theory", submitted to the Informatics
-   Center of the Pernambuco Federal University (CIn/UFPE) in
-   Brazil.
-   
-   The file README.md describes the contents of each file and 
-   provides instructions on how to compile them.
-   
-   Marcus Vinícius Midena Ramos
-   mvmramos@gmail.com
-   --------------------------------------------------------------------- *)
-   
 Require Import List.
 Require Import Ring.
 Require Import Omega.
@@ -46,10 +23,15 @@ Definition injective {A B: Type} (f: A->B) :=
 forall x y: A, f x = f y -> x = y.
 
 Definition bijective {A B: Type} (f: A->B) :=
-exists g: B->A, (forall x: A, g (f x) = x) /\ (forall y: B, f (g y) = y).
+{g: B->A | (forall x: A, g (f x) = x) /\ (forall y: B, f (g y) = y)}.
 
 Definition decidable (t: Type): Type:=
 (forall x y: t, {x=y}+{x<>y}).
+
+(*
+Definition dec_prop (t: Type): Prop:=
+(forall x y: t, (x=y) \/ (x<>y)).
+*)
 
 Lemma bijective_to_injective:
 forall t1 t2: Type,
@@ -73,10 +55,21 @@ decidable t1 ->
 decidable t2.
 Proof.
 intros t1 t2 f H1 H2 x y.
-(*
-destruct H1 as [g [H1 H2]].
-*)
-admit. (* --- *)
+assert (H1':= H1).
+apply bijective_to_injective in H1'.
+destruct H1 as [g [H1 H3]].
+rewrite <- (H3 x).
+rewrite <- (H3 y).
+unfold injective in H1'.
+specialize (H2 (g x) (g y)).
+destruct H2 as [H2 | H2].
+- rewrite H2.
+  left.
+  reflexivity.
+- right.
+  intros H4.
+  specialize (H1' (g x) (g y) H4).
+  contradiction. 
 Qed.
 
 Definition change_alphabet_in_language (t1 t2: Type) (l1: lang t1) (f: t1 -> t2): lang t2:=
