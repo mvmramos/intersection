@@ -7,9 +7,11 @@
    (i) languages square, prime and anbncn are not context-free; 
    (ii) context-free languages are not closed under intersection.
    
-   More information can be found in the article "Applications of the 
-   Formalization of the Pumping Lemma for Context-Free Languages, 
-   submitted to ITP 2017". Also, in the thesis "Formalization of 
+   More information can be found in the paper "Some Applications of the 
+   Formalization of the Pumping Lemma for Context-Free Languages", 
+   submitted to CPP 2018 by Marcus Vinícius Midena Ramos, Ruy J. G. B. 
+   de Queiroz, Nelma Moreira and José Carlos Bacelar Almeida. 
+   Also, in the thesis "Formalization of 
    Context-Free Language Theory", submitted to the Informatics
    Center of the Pernambuco Federal University (CIn/UFPE) in
    Brazil.
