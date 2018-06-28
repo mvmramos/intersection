@@ -9,7 +9,7 @@
    
    More information can be found in the paper "Some Applications of the 
    Formalization of the Pumping Lemma for Context-Free Languages", 
-   submitted to CPP 2018 by Marcus Vinícius Midena Ramos, Ruy J. G. B. 
+   submitted to LSFA 2018 by Marcus Vinícius Midena Ramos, Ruy J. G. B. 
    de Queiroz, Nelma Moreira and José Carlos Bacelar Almeida. 
    Also, in the thesis "Formalization of 
    Context-Free Language Theory", submitted to the Informatics
