@@ -1056,9 +1056,7 @@ induction H.
     destruct H5 as [H5 | H5].
     * inversion H2. 
       subst. 
-      rewrite <- H4 in H2. 
-      rewrite <- H4.
-      clear H2 H4. 
+      clear H2. 
       specialize (IHsfmatch p0 l3 l4).
       specialize (IHsfmatch (eq_refl (l3 ++ p0 :: l4))).
       destruct IHsfmatch as [x [l1 [l2 [H2 [H3 [H4 H5]]]]]].
@@ -3071,24 +3069,6 @@ Inductive empty'' (g: cfg non_terminal terminal): non_terminal + terminal -> Pro
               (forall s: non_terminal + terminal, In s right -> empty'' g s) ->
               empty'' g (inl left).
 
-Lemma empty_equiv_empty':
-forall g: cfg _ _,
-forall n: non_terminal,
-empty g (inl n) -> empty' g n.
-Proof.
-intros g n H.
-unfold empty in H.
-remember [inl n] as w1.
-remember [] as w2.
-rewrite Heqw2 in Heqw1.
-revert Heqw2.
-revert Heqw1.
-revert n.
-induction H.
-- admit. (* eee *)
-- admit. (* eee *)
-Qed.
-
 Lemma empty'_equiv_empty:
 forall g: cfg _ _,
 forall n: non_terminal,
@@ -3112,38 +3092,6 @@ induction H using empty'_ind2 with
   + exact IHempty'0.
   + exact IHempty'.
 Qed.
-
-Lemma empty_empty':
-forall g: cfg _ _,
-forall n: non_terminal,
-empty g (inl n) <-> empty' g n.
-Proof.
-intros g n.
-split.
-- apply empty_equiv_empty'.
-- apply empty'_equiv_empty.
-Qed.
-
-Lemma empty_equiv_empty'':
-forall g: cfg _ _,
-forall n: non_terminal,
-empty g (inl n) -> empty'' g (inl n).
-Proof.
-intros g n H.
-unfold empty in H.
-remember [inl n] as w1.
-remember [] as w2.
-rewrite Heqw2 in Heqw1.
-revert Heqw2.
-revert Heqw1.
-revert n.
-induction H.
-- intros n H1 H2.
-  subst.
-  inversion H2.
-- intros n H1 H2.
-  admit. (* eee *)
- Qed.
 
 Lemma empty''_equiv_empty:
 forall g: cfg _ _,
@@ -3184,89 +3132,6 @@ induction H.
         right. 
         exact H1.
       }
-Qed.
-
-Lemma empty_empty'':
-forall g: cfg _ _,
-forall n: non_terminal,
-empty g (inl n) <-> empty'' g (inl n).
-Proof.
-intros g n.
-split.
-- apply empty_equiv_empty''.
-- apply empty''_equiv_empty.
-Qed.
-
-(* --------------------------------------------------------------------- *)
-(* DECIDABILITY                                                          *)
-(* --------------------------------------------------------------------- *)
-
-Lemma empty_dec:
-forall g: cfg non_terminal terminal,
-forall n: non_terminal,
-empty g (inl n) \/ ~ empty g (inl n).
-Proof.
-intros g n.
-destruct g.
-admit. (* eee *)
-Qed.
-
-Lemma empty_rule_dec:
-forall g: cfg non_terminal terminal,
-(rules (g_emp' g) (start_symbol (g_emp' g)) []) \/ (~ rules (g_emp' g) (start_symbol (g_emp' g)) []).
-Proof.
-intros g.
-destruct (g_emp' g).
-destruct rules_finite as [n [ntl [tl rdf]]].
-unfold rules_finite_def in rdf.
-admit. (* eee *)
-Qed.
-
-Lemma produces_empty_dec:
-forall g: cfg non_terminal terminal,
-(produces_empty g) \/ (~ produces_empty g).
-Proof.
-intros g.
-assert (H: g_equiv (g_emp' g) g).
-  {
-  apply g_emp'_correct.
-  }
-assert (H1: (rules (g_emp' g) (start_symbol (g_emp' g)) []) \/ (~ rules (g_emp' g) (start_symbol (g_emp' g)) [])).
-  { 
-  apply empty_rule_dec.
-  }
-destruct H1 as [H1 | H1].
-- left. 
-  assert (H2: produces (g_emp' g) []). 
-    {
-    apply derives_start.
-    exact H1.
-    }
-  apply H.
-  exact H2.
-- right.
-  intros H2.
-  specialize (H []).
-  unfold produces_empty in H2.
-  destruct H as [_ H].
-  specialize (H H2).
-  clear H2.
-  apply derives_g_emp'_empty in H.
-  contradiction.
-Qed.
-
-Lemma produces_non_empty_dec:
-forall g: cfg non_terminal terminal,
-(produces_non_empty g) + (~ produces_non_empty g).
-Proof.
-admit. (* eee *)
-Qed.
-
-Lemma non_empty_dec:
-forall g: cfg non_terminal terminal,
-(non_empty g) + (~ non_empty g).
-Proof.
-admit. (* eee *)
 Qed.
 
 End EmptyRules_4_Lemmas.

@@ -23,7 +23,7 @@
    mvmramos@gmail.com
    --------------------------------------------------------------------- *)
 
-Require Import List.
+Require Import List Omega.
 
 Require Import misc_list.
 Require Import cfg.

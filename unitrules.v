@@ -93,21 +93,6 @@ induction H.
 - exact IHunit1.
 Qed.
 
-(*
-Lemma unit_exists_left:
-forall g: cfg _ _,
-forall a c: non_terminal,
-unit g a c ->
-exists b : non_terminal, rules g a [inl b].
-Proof.
-intros g a c H.
-induction H.
-- exists b.
-  exact H.
-- exact IHunit1. 
-Qed.
-*)
-
 Lemma g_unit_finite:
 forall g: cfg _ _,
 exists n: nat,

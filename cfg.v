@@ -3030,9 +3030,8 @@ induction H as [ | s | l s1 s2 H0 H1 IH H2 H3].
             destruct l0 as [|s0 l0].
             - simpl in H5.
               subst.
-              rewrite <- H2.
-              rewrite <- H6.
-              simpl. 
+              rewrite <- H6. 
+              simpl.
               reflexivity.              
             - subst.
               rewrite <- H6.
@@ -3069,7 +3068,6 @@ induction H as [ | s | l s1 s2 H0 H1 IH H2 H3].
             destruct l0 as [|s0 l0].
             - simpl in H5.
               subst.
-              rewrite <- H2.
               rewrite <- H6.
               simpl. 
               reflexivity.

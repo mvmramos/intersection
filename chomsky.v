@@ -598,55 +598,6 @@ induction n0.
   exact IHn0.  
 Qed.
 
-(*
-Lemma cnf_derives_not_empty_v2:
-forall g: cfg _ _,
-forall s1 s2: sf,
-is_cnf g \/ is_cnf_with_empty_rule g ->
-start_symbol_not_in_rhs g ->
-~ In (inl (start_symbol g)) s1 ->
-s1 <> [] ->
-derives g s1 s2 ->
-s2 <> [].
-Proof.
-intros g s1 s2 H1 H2 H3 H4 H5.
-destruct s1.
-- destruct H3.
-  destruct H4.
-  reflexivity.
-- change (s :: s1) with ([s] ++ s1) in H5.
-  apply derives_split in H5.
-  destruct H5 as [s1' [s2' [H5 [H6 H7]]]].
-  destruct s. 
-  + apply cnf_derives_not_empty_v1 in H6.
-    * {
-      destruct s1'.
-      - destruct H6.
-        reflexivity.
-      - rewrite H5.
-        apply app_not_nil_inv.
-        left.
-        apply not_eq_sym.
-        apply nil_cons.
-      }
-    * exact H1.
-    * exact H2.
-    * intros H8.
-      apply H3.
-      rewrite H8.
-      simpl.
-      left.
-      reflexivity.
-  + change [inr t] with (map (@inr non_terminal terminal) [t]) in H6.
-    apply derives_sentence_left in H6.
-    rewrite H6 in H5.
-    rewrite H5.
-    simpl.
-    apply not_eq_sym.
-    apply nil_cons.
-Qed.
-*)
-
 Lemma is_cnf_right_formats_v2:
 forall g: cfg non_terminal' terminal,
 forall left: non_terminal',
@@ -680,7 +631,7 @@ destruct H1 as [H1 | H1].
     * destruct H1 as [s1 [s2 H1]].
       right.
       destruct s1, s2.
-      exists l l0.
+      exists l, l0.
       exact H1.
     * destruct H1 as [t H1].
       left.
@@ -1962,10 +1913,10 @@ inversion H.
   exists t.
   reflexivity.
 - left.
-  exists (Lift_r [s1]) (Lift_r (s2 :: beta)).
+  exists (Lift_r [s1]), (Lift_r (s2 :: beta)).
   reflexivity.
 - left.
-  exists (Lift_r [s2]) (Lift_r (s3 :: beta)).
+  exists (Lift_r [s2]), (Lift_r (s3 :: beta)).
   reflexivity.
 Qed.
 

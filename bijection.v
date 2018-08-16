@@ -53,11 +53,6 @@ Definition bijective {A B: Type} (f: A->B) :=
 Definition decidable (t: Type): Type:=
 (forall x y: t, {x=y}+{x<>y}).
 
-(*
-Definition dec_prop (t: Type): Prop:=
-(forall x y: t, (x=y) \/ (x<>y)).
-*)
-
 Lemma bijective_to_injective:
 forall t1 t2: Type,
 forall f: t1 -> t2,

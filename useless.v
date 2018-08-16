@@ -673,33 +673,4 @@ match s with
 | inr t => True
 end.
 
-Lemma useful_equiv_useful2:
-forall s: non_terminal+terminal,
-forall g: cfg _ _,
-useful g s <-> useful2 g s.
-Proof.
-intros s g.
-split.
-- intros H1.
-  destruct s.
-  + simpl in H1.
-    destruct H1 as [s H1].
-    remember [inl n] as w1.
-    remember (map term_lift s) as w2.
-    induction H1.
-    * rewrite Heqw1 in Heqw2.
-      {
-      destruct s.
-      - inversion Heqw2.
-      - inversion Heqw2.
-      }
-    * admit. (* --- *)
-  + constructor. 
-- intros H1.
-  induction H1. 
-  + constructor. 
-  + simpl.
-    admit. (* --- *)
-Qed.
-
 End Useless.

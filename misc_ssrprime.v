@@ -23,8 +23,8 @@
    mvmramos@gmail.com
    --------------------------------------------------------------------- *)
 
-Require Import ssreflect ssrfun ssrbool ssrnat eqtype.
-Require Import div prime.
+From mathcomp.ssreflect Require Import ssreflect ssrfun ssrbool ssrnat eqtype.
+From mathcomp.ssreflect Require Import div prime.
 
 Lemma dvdn_factmn m n: 0<m<=n -> m %| n`!.
 Proof.
