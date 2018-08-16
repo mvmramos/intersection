@@ -30,10 +30,10 @@ File list:
 - useless.v: elimination of useless symbols in a context-free grammar;
 
 To compile, download all files and:
-- coq_makefile *.v > _makefile
+- coq_makefile *.v -o _makefile
 - make -f _makefile
 
-These files have been created and compiled with the Coq Proof Assistant, version 8.4pl4 (June 2014).
+These files have been compiled with the Coq Proof Assistant, version 8.8.1 (July 2018).
 
 More information can be found in the paper "Some Applications of the Formalization of the Pumping Lemma for Context-Free Languages", submitted to LSFA 2018 by Marcus Vinícius Midena Ramos, Ruy J. G. B. de Queiroz, Nelma Moreira and José Carlos Bacelar Almeida.
 
